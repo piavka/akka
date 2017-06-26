@@ -16,7 +16,12 @@ import akka.util.Helpers.{ Requiring, ConfigOps, toRootLowerCase }
 import scala.concurrent.duration.FiniteDuration
 import akka.japi.Util.immutableSeq
 
+object ClusterSettings {
+  final val TeamRolePrefix = "team-"
+}
+
 final class ClusterSettings(val config: Config, val systemName: String) {
+  import ClusterSettings._
 
   private val cc = config.getConfig("akka.cluster")
 
@@ -94,7 +99,7 @@ final class ClusterSettings(val config: Config, val systemName: String) {
   val AllowWeaklyUpMembers = cc.getBoolean("allow-weakly-up-members")
 
   val Team: String = cc.getString("team")
-  val Roles: Set[String] = immutableSeq(cc.getStringList("roles")).toSet + s"team-$Team"
+  val Roles: Set[String] = immutableSeq(cc.getStringList("roles")).toSet + (TeamRolePrefix + Team)
   val MinNrOfMembers: Int = {
     cc.getInt("min-nr-of-members")
   } requiring (_ > 0, "min-nr-of-members must be > 0")

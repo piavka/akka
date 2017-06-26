@@ -34,7 +34,7 @@ class DistributedData(system: ExtendedActorSystem) extends Extension {
    * Returns true if this member is not tagged with the role configured for the
    * replicas.
    */
-  def isTerminated: Boolean = Cluster(system).isTerminated || !settings.role.forall(Cluster(system).selfRoles.contains)
+  def isTerminated: Boolean = Cluster(system).isTerminated || !settings.roles.forall(Cluster(system).selfRoles.contains)
 
   /**
    * `ActorRef` of the [[Replicator]] .

@@ -19,6 +19,7 @@ import com.typesafe.config.Config
 import akka.actor.NoSerializationVerificationNeeded
 import akka.event.Logging
 import akka.util.MessageBuffer
+import akka.cluster.ClusterSettings
 
 object ClusterSingletonProxySettings {
 
@@ -175,12 +176,12 @@ final class ClusterSingletonProxy(singletonManagerPath: String, settings: Cluste
     identifyTimer = None
   }
 
-  private val targetTeam = settings.team match {
-    case Some(t) ⇒ "team-" + t
-    case None    ⇒ "team-" + cluster.settings.Team
+  private val targetTeamRole = settings.team match {
+    case Some(t) ⇒ ClusterSettings.TeamRolePrefix + t
+    case None    ⇒ ClusterSettings.TeamRolePrefix + cluster.settings.Team
   }
 
-  def matchingRole(member: Member): Boolean = member.hasRole(targetTeam) && (role match {
+  def matchingRole(member: Member): Boolean = member.hasRole(targetTeamRole) && (role match {
     case None    ⇒ true
     case Some(r) ⇒ member.hasRole(r)
   })
